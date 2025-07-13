@@ -1,4 +1,4 @@
-window.BACKEND_URL = "nyrfestas-bcknd-module.railway.internal"
+window.BACKEND_URL = "https://plgrnd-production.up.railway.app/"
 
 //window.BACKEND_URL = "http://localhost"
 
