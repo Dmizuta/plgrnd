@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    input {
+        padding: 10px;
+        font-size: 16px;
+    }
+    button {
+        padding: 10px 15px;
+        font-size: 16px;
+        margin-left: 10px;
+    }
+
+    
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  thead {
+    background-color: #333;
+    color: #fff;
+  }
+
+  th, td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  h2 {
+    font-family: sans-serif;
+    margin-top: 20px;
+  }
+
+
+</style>    
+<body>
+
+    <input type="text" id="input1" value="Hello, World!">Nome
+    <input type="text" id="input2" value="Hello, World!">Idade
+    <input type="text" id="input3" value="Hello, World!">Sexo
+    <br><br>
+    <button id="button1">Send</button>
+
+    <table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Idade</th>
+      <th>Sexo</th>
+    </tr>
+  </thead>
+  <tbody id="table-body">
+    <!-- Rows get added here dynamically -->
+  </tbody>
+</table>
+
+    
+</body>
+
+
+
+<script>
+
+// endpoint
+    document.getElementById('button1').addEventListener('click', async function() {
+        const inputValue1 = document.getElementById('input1').value;
+        const inputValue2 = document.getElementById('input2').value;
+        const inputValue3 = document.getElementById('input3').value;
+    
+      
+        const requestData = {
+            input1:inputValue1,
+            input2:inputValue2,
+            input3:inputValue3
+
+        };
+    
+         
+        try {
+            const response = await fetch('https://nyrfestas-bcknd-module.onrender.com/update', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestData),
+            });
+
+            if (response.ok) {
+                alert('DADOS INSERIDOS COM SUCESSO!');
+            } else {
+                
+                alert('Ocorreu um erro, tente novamente.');
+            }
+        } catch (error) {
+            console.error("Erro:", error);
+        }
+    });
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Fetch data from the backend and populate the table
+    async function fetchData() {
+        try {
+            const response = await fetch('https://nyrfestas-bcknd-module.onrender.com/data');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            data.forEach(item => {
+  tableBody.innerHTML += `
+    <tr>
+      <td>${item.input1}</td>
+      <td>${item.input2}</td>
+      <td>${item.input3}</td>
+      
+    </tr>
+  `;
+});
+/*
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${item.input1}</td><td>${item.input2}</td><td>${item.input3}</td>`;
+                tableBody.appendChild(row);
+            });*/
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+document.addEventListener('DOMContentLoaded', fetchData);
+
+
+
+      
+   
+</script>
+</html>
