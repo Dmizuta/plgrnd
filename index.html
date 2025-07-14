@@ -63,15 +63,21 @@
 </style>    
 <body>
 
-    <input type="text" id="input1" value="Hello, World!">Nome
-    <input type="text" id="input2" value="Hello, World!">Idade
-    <input type="text" id="input3" value="Hello, World!">Sexo
+    <input type="text" id="input1" >Nome
+    <input type="text" id="input2" >Idade
+    <input type="text" id="input3" >Sexo
     <br><br>
-    <button id="button1">Send</button>
+    <button id="send">Send</button>
+    <button id="reload" onclick="reload()">Reload</button>
+    
+    <input type="text" id="id" placeholder="Enter ID to delete" />
+<button id="deleteButton">Delete</button>
+
 
     <table>
   <thead>
     <tr>
+      <th>Id</th>
       <th>Nome</th>
       <th>Idade</th>
       <th>Sexo</th>
@@ -88,9 +94,14 @@
 
 
 <script>
+/*
+
+function reload() {
+    window.location.reload();
+}
 
 // endpoint
-    document.getElementById('button1').addEventListener('click', async function() {
+    document.getElementById('send').addEventListener('click', async function() {
         const inputValue1 = document.getElementById('input1').value;
         const inputValue2 = document.getElementById('input2').value;
         const inputValue3 = document.getElementById('input3').value;
@@ -138,6 +149,7 @@
             data.forEach(item => {
   tableBody.innerHTML += `
     <tr>
+      <td>${item.id}</td>
       <td>${item.input1}</td>
       <td>${item.input2}</td>
       <td>${item.input3}</td>
@@ -145,22 +157,129 @@
     </tr>
   `;
 });
-/*
 
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${item.input1}</td><td>${item.input2}</td><td>${item.input3}</td>`;
-                tableBody.appendChild(row);
-            });*/
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     }
 document.addEventListener('DOMContentLoaded', fetchData);
 
+//////////////////////////////////////////////////////////////////////
 
 
-      
+
+
+document.getElementById('deleteButton').addEventListener('click', deleteRow);
+
+function deleteRow() {
+    const id = document.getElementById('id').value;
+
+    fetch(`${URL_API}/delete/${id}`, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Row deleted successfully!');
+            fetchData(); // Refresh the table
+        } else {
+            alert('Failed to delete. Try again.');
+        }
+    })
+    .catch(error => console.error('Error deleting row:', error));
+}
+
+
+      */
    
+function reload() {
+    window.location.reload();
+}
+
+// POST: Enviar dados
+document.getElementById('send').addEventListener('click', async function () {
+    const inputValue1 = document.getElementById('input1').value;
+    const inputValue2 = document.getElementById('input2').value;
+    const inputValue3 = document.getElementById('input3').value;
+
+    const requestData = {
+        input1: inputValue1,
+        input2: inputValue2,
+        input3: inputValue3
+    };
+
+    try {
+        const response = await axios.post(`${URL_API}/update`, requestData);
+        alert('DADOS INSERIDOS COM SUCESSO!');
+    } catch (error) {
+        console.error("Erro ao enviar:", error);
+        alert('Ocorreu um erro, tente novamente.');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+// GET: Buscar dados e popular tabela
+async function fetchData() {
+    try {
+        const response = await axios.get(`${URL_API}/data`);
+        const data = response.data;
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = ''; // Limpa linhas existentes
+
+        data.forEach(item => {
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.input1}</td>
+                    <td>${item.input2}</td>
+                    <td>${item.input3}</td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fetchData);
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+// DELETE: Remover dados
+document.getElementById('deleteButton').addEventListener('click', deleteRow);
+
+async function deleteRow() {
+    const id = document.getElementById('id').value;
+
+    try {
+        await axios.delete(`${URL_API}/delete/${id}`);
+        alert('Row deleted successfully!');
+        fetchData(); // Atualiza a tabela
+    } catch (error) {
+        console.error('Erro ao deletar:', error);
+        alert('Erro ao deletar. Tente novamente.');
+    }
+}
+
+
+document.getElementById('deleteButton').addEventListener('click', deleteRow);
+
+function deleteRow() {
+    const id = document.getElementById('id').value;
+
+    fetch(`${URL_API}/delete/${id}`, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Row deleted successfully!');
+            fetchData(); // Refresh the table
+        } else {
+            alert('Failed to delete. Try again.');
+        }
+    })
+    .catch(error => console.error('Error deleting row:', error));
+}
+
 </script>
 </html>
